@@ -10,14 +10,24 @@ def get_files_info(working_directory: str, directory: str = ".") -> str:
             os.path.commonpath([working_dir_abs, target_dir]) == working_dir_abs
         )
 
-        if valid_taget_dir == False:
-            return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
+        if not valid_taget_dir:
+            return f'Result for {directory} directory:\nError: Cannot list "{directory}" as it is outside the permitted working directory'
 
-        if os.path.isdir(target_dir) == False:
-            return f'Error: "{directory}" is not a directory'
+        if not os.path.isdir(target_dir):
+            return f'Result for {directory} directory:\n Error: "{directory}" is not a directory'
 
-        if valid_taget_dir == True:
-            return f'Success: "{directory}" is within the working directory'
+        # return f'Success: "{directory}" is within the working directory'
 
-    except Exception:
-        return "Error: Not a valid input!"
+        file_list = os.listdir(target_dir)
+
+        return_string = f"Result for '{directory}' directory:\n"
+
+        for file in file_list:
+            size = os.path.getsize(os.path.join(target_dir, file))
+            is_dir = os.path.isdir(os.path.join(target_dir, file))
+
+            return_string += f"{file}: file_size={size} bytes, is_dir={is_dir}\n"
+
+        return return_string
+    except (OSError, ValueError) as e:
+        return f"Result for {directory} directory:\n Error: {e}"
